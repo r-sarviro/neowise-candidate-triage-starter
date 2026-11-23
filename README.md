@@ -1,29 +1,42 @@
-# Тестовое Neowise. AI-помощник для входящих заявок
+# Neowise take-home — AI helper for inbound requests
 
-Ориентир — 45–60 минут. Менеджер вводит текст заявки, получает тему и черновик ответа. Он читает результат и сам решает, что отправить клиенту.
+**Language:** [EN](README.md) · [RU](README.ru.md)
 
-## Запуск
+Neowise take-home: AI helper that triages inbound requests (topic + reply draft).
 
-В репозитории есть сервер, HTML-страница и имитатор модели. Нужен Node.js 20 или новее. Зависимостей и ключей нет.
+Target time: 45–60 minutes. A manager pastes request text, gets a topic and a reply draft, then decides what to send to the client.
+
+## Requirements
+
+- Node.js 20 or newer
+- No npm dependencies and no API keys
+
+## Quick start
+
+The repo includes a server, an HTML page, and a model simulator.
 
 ```sh
 node server.mjs
 ```
 
-Откройте http://127.0.0.1:3000. Порт можно задать через переменную `PORT`.
+Open http://127.0.0.1:3000. Override the port with the `PORT` environment variable.
 
-## Что изменить
+## What to change
 
-1. Доработайте `POST /api/triage`. Принимайте JSON с полем `text`, содержащим непустую строку. При пустом, отсутствующем, нестроковом вводе или битом JSON верните HTTP 400 и `{"status":"invalid_input"}`.
-2. При корректном ответе модели верните HTTP 200 и `{"status":"ready","topic":"…","draft":"…"}`. Допустимые темы — `delivery`, `pricing`, `other`. Черновик должен быть непустой строкой. При таймауте, ошибке модели или неподходящем ответе верните HTTP 200 и `{"status":"manual_review","topic":null,"draft":null}`. Ограничьте ожидание модели 300 мс. Оставьте поведение выданного имитатора прежним.
-3. Покажите на странице тему и черновик при успехе. Для `manual_review` покажите понятное сообщение менеджеру и очистите предыдущий черновик. Добавьте хотя бы один исполнимый тест для поведения при сбое и инструкцию его запуска.
+1. Finish `POST /api/triage`. Accept JSON with a `text` field that is a non-empty string. For missing, empty, non-string, or broken JSON input return HTTP 400 and `{"status":"invalid_input"}`.
+2. On a valid model response return HTTP 200 and `{"status":"ready","topic":"…","draft":"…"}`. Allowed topics: `delivery`, `pricing`, `other`. The draft must be a non-empty string. On model timeout, error, or unsuitable response return HTTP 200 and `{"status":"manual_review","topic":null,"draft":null}`. Cap waiting for the model at 300 ms. Keep the provided simulator behavior unchanged.
+3. On the page, show the topic and draft on success. For `manual_review`, show a clear message to the manager and clear the previous draft. Add at least one executable test for failure behavior and document how to run it.
 
-Для локальной проверки имитатор принимает любой обычный текст. Метки `[timeout]`, `[error]`, `[bad-json]`, `[bad-topic]`, `[empty-draft]` включают отдельные сценарии сбоя.
+For local checks the simulator accepts any ordinary text. Labels `[timeout]`, `[error]`, `[bad-json]`, `[bad-topic]`, `[empty-draft]` trigger separate failure scenarios.
 
-## Что прислать в бота
+## What to send to the bot
 
-- Ссылку на pull request и SHA проверяемого коммита. Можно использовать свой учебный репозиторий. Сохраните начальный код первым коммитом, затем откройте PR из отдельной ветки.
-- Короткую инструкцию запуска и прогона теста. В описании PR ответьте, где проверяется результат AI, что происходит при сбое, какой AI вы использовали и что проверили самостоятельно. Если работали без AI, укажите это.
-- Одну фразу о том, какую пользу задача даёт менеджеру и как её можно измерить.
+- A pull request link and the SHA of the commit under review. You may use your own practice repository. Keep the starter code as the first commit, then open a PR from a separate branch.
+- A short run/test instruction. In the PR description answer where the AI result is checked, what happens on failure, which AI you used, and what you verified yourself. If you worked without AI, say so.
+- One sentence on the value for the manager and how it could be measured.
 
-После сдачи бот может задать один-два коротких вопроса по вашему коду. Используйте учебные данные. Если не уложились по времени, отметьте незавершённые части в PR.
+After submission the bot may ask one or two short questions about your code. Use synthetic data. If you ran out of time, note unfinished parts in the PR.
+
+## License
+
+MIT
